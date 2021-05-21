@@ -1,0 +1,10 @@
+(** @canonical Dune__exe.P18 *)
+module P18 = Dune__exe__P18
+
+
+(** @canonical Dune__exe.P43 *)
+module P43 = Dune__exe__P43
+
+
+(** @canonical Dune__exe.P50 *)
+module P50 = Dune__exe__P50

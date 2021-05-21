@@ -1,0 +1,3 @@
+(library
+  (name prime_sieve )
+  (libraries base))
