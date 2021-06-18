@@ -1,0 +1,1 @@
+../../../../default/front/potato__.ml-gen

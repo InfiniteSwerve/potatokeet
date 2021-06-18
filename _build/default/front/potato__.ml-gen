@@ -1,0 +1,14 @@
+(** @canonical Potato.Ast *)
+module Ast = Potato__Ast
+
+
+(** @canonical Potato.Lexer *)
+module Lexer = Potato__Lexer
+
+
+(** @canonical Potato.Parser *)
+module Parser = Potato__Parser
+
+
+(** @canonical Potato.Typer *)
+module Typer = Potato__Typer

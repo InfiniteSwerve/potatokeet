@@ -1,0 +1,25 @@
+type token =
+    VAR of string
+  | TRUE
+  | SUB
+  | RPAREN
+  | RARROW
+  | OR
+  | MULT
+  | LPAREN
+  | LET
+  | INT of int
+  | IN
+  | FUN
+  | FALSE
+  | EQUAL
+  | EOF
+  | DIV
+  | AND
+  | ADD
+val menhir_begin_marker : int
+val xv_paren_exp : Ast.expr
+val xv_expr : Ast.expr
+val xv_eval : Ast.expr
+val xv_binop : Ast.binop
+val menhir_end_marker : int

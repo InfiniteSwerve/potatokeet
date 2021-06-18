@@ -1,0 +1,5 @@
+lib: [
+  "_build/install/default/lib/potato/META"
+  "_build/install/default/lib/potato/dune-package"
+  "_build/install/default/lib/potato/opam"
+]

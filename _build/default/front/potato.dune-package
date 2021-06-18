@@ -1,0 +1,31 @@
+(lang dune 2.8)
+(name potato)
+(library
+ (name potato)
+ (kind normal)
+ (archives (byte potato.cma) (native potato.cmxa))
+ (plugins (byte potato.cma) (native potato.cmxs))
+ (native_archives potato.a)
+ (requires base stdio)
+ (main_module_name Potato)
+ (modes byte native)
+ (modules
+  (wrapped
+   (main_module_name Potato)
+   (modules
+    ((name Ast) (obj_name potato__Ast) (visibility public) (impl))
+    ((name Lexer) (obj_name potato__Lexer) (visibility public) (impl))
+    ((name Parser)
+     (obj_name potato__Parser)
+     (visibility public)
+     (impl)
+     (intf))
+    ((name Potato) (obj_name potato) (visibility public) (impl))
+    ((name Typer) (obj_name potato__Typer) (visibility public) (impl)))
+   (alias_module
+    (name Potato__)
+    (obj_name potato__)
+    (visibility public)
+    (kind alias)
+    (impl))
+   (wrapped true))))
