@@ -1,3 +1,0 @@
-(executable 
- (name p50)
- (libraries base prime_sieve stdio))

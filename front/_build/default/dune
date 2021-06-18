@@ -1,0 +1,8 @@
+(library
+ (name potato)
+ (libraries base stdio))
+ 
+(ocamllex lexer)
+
+(menhir 
+ (modules parser))

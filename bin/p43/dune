@@ -1,3 +1,0 @@
-(executable
-  (libraries  base permutations stdio )
-  (name p43))

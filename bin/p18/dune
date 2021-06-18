@@ -1,3 +1,0 @@
-(executable
-  (libraries base stdio)
-    (name p18))
