@@ -5,7 +5,7 @@
 
 let white = [' ' '\t']+
 let digit = ['0'-'9']
-let int = '-'? digit+
+let int = digit+
 let letter = ['a'-'z' 'A'-'Z']
 let var = letter+
 
@@ -32,6 +32,7 @@ rule read =
     | "in" { IN }
     | "(" { LPAREN }
     | ")" { RPAREN }
+    | ":" { COLON }
     | var { VAR (Lexing.lexeme lexbuf) }
     | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | eof { EOF }

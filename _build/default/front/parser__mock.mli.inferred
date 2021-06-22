@@ -15,6 +15,7 @@ type token =
   | EQUAL
   | EOF
   | DIV
+  | COLON
   | AND
   | ADD
 val menhir_begin_marker : int

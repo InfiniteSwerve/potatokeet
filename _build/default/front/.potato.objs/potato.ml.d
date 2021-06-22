@@ -1,1 +1,1 @@
-front/potato.ml: Ast Lexer Lexing Parser Set String Typer
+front/potato.ml: Ast Environment Lexer Lexing Parser Set String Typer

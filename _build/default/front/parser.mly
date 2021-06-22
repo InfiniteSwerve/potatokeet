@@ -22,6 +22,7 @@ open Ast
 %token IN
 %token LPAREN
 %token RPAREN
+%token COLON
 %token AND
 %token OR 
 %token EOF
@@ -57,12 +58,12 @@ expr:
     | FALSE { Bool false }
     | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2) }   
     | LET; var = VAR; EQUAL; e1 = expr; IN; e2 = expr { Let (var, e1, e2) }
+    | e1 = expr; e2 = expr { App (e1, e2) }
     | pexpr = paren_exp { pexpr }
 
 paren_exp:
-    | LPAREN; SUB; i = INT; RPAREN { Int (-i) }
-    | LPAREN; e1 = expr; e2 = expr; RPAREN { App (e1, e2) } 
     | LPAREN; FUN; var = VAR; RARROW; e = expr; RPAREN { Fun (var, e) }
+    | LPAREN; SUB; i = INT; RPAREN { Int (-i) }
     | LPAREN; e = expr; RPAREN { e }
 
 

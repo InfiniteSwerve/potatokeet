@@ -1,7 +1,0 @@
-[33mASSERT[0m unit true
-[33mASSERT[0m unit false
-[33mASSERT[0m t&t
-[33mASSERT[0m t&f
-[33mASSERT[0m f|t
-[33mASSERT[0m f|f
-[33mASSERT[0m nested booleans

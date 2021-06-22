@@ -18,6 +18,7 @@ type token =
   | EQUAL
   | EOF
   | DIV
+  | COLON
   | AND
   | ADD
 

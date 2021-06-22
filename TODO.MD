@@ -2,10 +2,10 @@
 - Lambda functions [DONE]
 - Application [DONE]
 - Unary ops (neg and not)
-- Pretty printing of output 
-- Static scoping (using env)
+- Pretty printing of output [DONE]
+- Static scoping (using env) 
 - Allow proximal function application (f x y instead of (f x) y)
-- Typing (type annotations on parameters)
+- Typing (type annotations on parameters) (write tests for piece)
 - Testing [DONE]
 - Include PPX Bisect for code coverage
 - Make Sub more intuitive and proper

@@ -124,8 +124,11 @@ let rec eval e =
   else eval @@ simplify e
 
 
+let type_of s = 
+  find_type Environment.empty s
+
 let interp s = 
   let e = parse s in
+  (*typecheck e;*)
   pretty_print @@ eval e
-  (*if typecheck e then simplify e
-  else failwith "Bad typing"*)
+  
