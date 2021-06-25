@@ -19,6 +19,8 @@ rule read =
     | white { read lexbuf }
     | "true" { TRUE }
     | "false" { FALSE }
+    | "bool" { TBOOL }
+    | "int" { TINT }
     | "fun" { FUN }
     | "->" { RARROW }
     | "+" { ADD }

@@ -4,6 +4,8 @@
 type token = 
   | VAR of (string)
   | TRUE
+  | TINT
+  | TBOOL
   | SUB
   | RPAREN
   | RARROW

@@ -1,7 +1,8 @@
 (library
  (name potato)
  (public_name potato)
- (libraries base stdio))
+ (libraries base stdio)
+ (instrumentation (backend bisect_ppx)))
  
 (ocamllex lexer)
 

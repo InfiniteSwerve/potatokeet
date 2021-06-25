@@ -45,6 +45,9 @@ let static_coping_test () =
   Alcotest.(check string)   "basic scoping test" "4" (interp "let x = 1 in let c = 3 in let f = (fun y ->  c + x) in let x = 2 in f x")
 
 
+
+
+
 let () = 
   let open Alcotest in
   run "tests" [

@@ -1,4 +1,3 @@
-(* declaring basic types *)
 open Ast
 
 (* defining errors *)
@@ -12,14 +11,17 @@ let binop_err = "Type mismatch on Binop"
 (* error for evaluating an expr that's not a function*)
 let not_function_err = "First expression is not a function "
 
+let unspecified_type_err = "Error: Unspecified Type"
 
-
+(* declaring basic types *)
 type ttype = 
   | TypeInt
   | TypeBool
-  | TypeFunc
+  | TypeFunc of (ttype * ttype)
 
-(* defining context *)
+
+
+(* defining environment *)
 module Environment = struct
   type t = (string * ttype) list 
 
@@ -36,25 +38,26 @@ end
 
 open Environment
 
+let type_to_type (t : typ) : ttype = 
+  match t with
+  | TInt  -> TypeInt
+  | TBool -> TypeBool
 
-let match_ (l:string) (r:string) : bool = 
-  l = r 
-
-
-let is_value : expr -> bool= function
+let is_value : expr -> bool = function
   | Bool _ | Int _ | Fun _ -> true
   | Let _ | App _ | Var _ | Binop _ -> false
 
+(* finds type of the input expression based on env *)
 let rec find_type env = function
   | Int _ -> TypeInt
   | Bool _ -> TypeBool
   | Var var -> find env var 
   | Binop (binop, e1, e2) -> find_type_binop env binop e1 e2
   | Let (var, e1, e2) -> find_type_let env var e1 e2
-  | Fun (_, e) -> find_type env e
+  | Fun (var, t, e) -> find_type_fun env var t e
   | App (e1, e2) -> find_type_app env e1 e2 
 
-
+(* helper function for find_type *)
 and find_type_binop env binop e1 e2 = 
   let t1, t2 = find_type env e1, find_type env e2 in
   match binop, t1, t2 with
@@ -66,26 +69,30 @@ and find_type_binop env binop e1 e2 =
   | Or, TypeBool, TypeBool -> TypeBool
   | _ -> failwith binop_err
 
+(* helper function for find_type *)
 and find_type_let env var e1 e2 = 
   let t1 = find_type env e1 in
   let env' = add env var t1 in
   find_type env' e2 
 
+(* helper function for find_type *)
 and find_type_app env e1 e2  = 
   match e1 with
-  | Fun(var, e) -> find_type_let env var e2 e 
+  | Fun(var, _, e) -> find_type_let env var e2 e 
   | _ ->  failwith not_function_err
 
+and find_type_fun env var t e = 
+  let t' = type_to_type t in
+  let env' = add env var t' in
+  TypeFunc (t', (find_type env' e))
+
+
+(* raises errors if expr is not well-typed, unit otherwise *)
 let typecheck expr = 
   ignore (find_type empty expr)
 
 
   
-
-
-
-
-
 
 
 

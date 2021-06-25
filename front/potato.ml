@@ -1,5 +1,7 @@
 open Ast
 open Typer
+
+(* pushes string through lexer and parser and returns AST *)
 let parse (s : string) : expr = 
   let tokens = Lexing.from_string s in
   let ast = Parser.eval Lexer.read tokens in
@@ -7,6 +9,9 @@ let parse (s : string) : expr =
 
 let unbound_variable_err = "Error: Unbound Variable"
 
+
+
+(* generate a fresh symbol *)
 let gensym = 
   let counter = ref 0 in
   fun () -> incr counter; "var" ^ string_of_int !counter
@@ -20,21 +25,24 @@ let union = VarSet.union
 let diff = VarSet.diff
 let mem = VarSet.mem
 
+(* finds free-variables in expr *)
 let rec fv : expr -> VarSet.t = function
   | Var var -> singleton var
   | App (e1, e2) -> union (fv e1) (fv e2)
-  | Fun (var, e) -> diff (fv e) (singleton var)
+  | Fun (var, _, e) -> diff (fv e) (singleton var)
   | _ -> empty
 
+(* replaces variables to deal with capture
+   avoiding substitution *)
 let rec replace e y x = match e with
   | Var z -> if z = x then Var y else e
   | App (e1, e2) -> App(replace e1 y x, replace e2 y x)
-  | Fun (var, exp) -> Fun ( (if var = x then y else var), replace exp y x)
+  | Fun (var, t, exp) -> Fun ( (if var = x then y else var), t, replace exp y x)
   | Let (var, e1, e2) -> Let ((if var = x then y else var), replace e1 y x, replace e2 y x)
   | Binop (binop, e1, e2) -> Binop (binop, replace e1 y x, replace e2 y x)
   | _ -> e
 
-
+(* substitutes all variable x's in expr e with value v  *)
 let rec subst e v x = 
   match e with
   (* replace all x's with v's in e *)
@@ -50,14 +58,15 @@ let rec subst e v x =
     if var = x then Let (var, subst_e, e2)
     else Let (var, subst_e, subst e2 v x)
   (* We fix variable capture by replacement*)
-  | Fun (var, exp) -> 
+  | Fun (var, t, exp) -> 
     if var = x then e 
-    else if not (mem var (fv v)) then Fun (var, subst exp v x)
+    else if not (mem var (fv v)) then Fun (var, t, subst exp v x)
     else 
       let fresh = gensym () in
       let new_body = replace exp var fresh in
-      Fun (fresh, subst new_body v x)  
+      Fun (fresh, t, subst new_body v x)  
   | App (e1, e2) -> App (subst e1 v x, subst e2 v x)
+
 
 (* simplify does structural simplifying of expressions *)
 let rec simplify ( expr : expr ) : expr = match expr with
@@ -75,6 +84,7 @@ let rec simplify ( expr : expr ) : expr = match expr with
   | App (e1, e2) -> App(simplify e1, e2)
   | Fun _ -> expr
   
+  
 
 (* returns v1 op v2 when v1, v2 are values not expr's *)
 and binop_step op v1 v2 = match op, v1, v2 with
@@ -89,10 +99,10 @@ and binop_step op v1 v2 = match op, v1, v2 with
 (* applies e2 to e1 if e1 is a function *)
 and app_step e1 e2 = 
   match e1 with
-  | Fun (var, e) -> subst e (simplify e2) var
+  | Fun (var, _, e) -> subst e (simplify e2) var
   | _ -> failwith not_function_err
 
-
+(* pattern matches through expr and returns result as string *)
 let rec pretty_print (expr:expr) : string = 
   match expr with
   | Int i -> string_of_int i
@@ -101,11 +111,11 @@ let rec pretty_print (expr:expr) : string =
   | Binop (op, e1, e2) -> binop_print op e1 e2
   | Let (var, e1, e2) -> 
       "let " ^ var ^ " = " ^ pretty_print e1 ^ " in " ^ pretty_print e2
-  | Fun (var, e) ->
-       "fun " ^ var ^ " -> " ^ pretty_print e
+  | Fun (var, t, e) -> fun_print var t e 
+       
   | App (e1, e2) -> pretty_print e1 ^ pretty_print e2 
 
-
+(* helper function for pretty_print *)
 and binop_print op e1 e2 = 
   let h e1 e2 sym = pretty_print e1 ^ sym ^ pretty_print e2 in
   let pevh = h e1 e2 in
@@ -117,8 +127,14 @@ and binop_print op e1 e2 =
   | And -> pevh " && "
   | Or -> pevh " || "
 
+and fun_print var t e = 
+  let t' = match t with
+  | TInt -> "int"
+  | TBool -> "bool"
+  in
+  "fun " ^ var ^ " : " ^ t' ^ " -> " ^ pretty_print e
 
-
+(* Simplifies AST's until they are values *)
 let rec eval e = 
   if is_value e then e 
   else eval @@ simplify e
@@ -127,8 +143,9 @@ let rec eval e =
 let type_of s = 
   find_type Environment.empty s
 
-let interp s = 
+(* big step function for evaluating expressions *)
+  let interp s = 
   let e = parse s in
-  (*typecheck e;*)
+  typecheck e;
   pretty_print @@ eval e
   

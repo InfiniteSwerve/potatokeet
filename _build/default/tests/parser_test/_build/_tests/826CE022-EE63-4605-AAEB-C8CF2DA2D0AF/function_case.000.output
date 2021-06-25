@@ -1,0 +1,13 @@
+[33mASSERT[0m unit
+[33mASSERT[0m add
+[33mASSERT[0m long add
+[33mASSERT[0m unit sub
+[33mASSERT[0m long sub
+[33mASSERT[0m unit neg
+[33mASSERT[0m neg in sub
+[33mASSERT[0m unit mult
+[33mASSERT[0m long mult
+[33mASSERT[0m unit div
+[33mASSERT[0m neg num div
+[33mASSERT[0m neg denom div
+[33mASSERT[0m frac div

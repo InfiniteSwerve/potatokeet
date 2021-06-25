@@ -1,6 +1,8 @@
 type token =
     VAR of string
   | TRUE
+  | TINT
+  | TBOOL
   | SUB
   | RPAREN
   | RARROW
@@ -19,6 +21,7 @@ type token =
   | AND
   | ADD
 val menhir_begin_marker : int
+val xv_typ : Ast.typ
 val xv_paren_exp : Ast.expr
 val xv_expr : Ast.expr
 val xv_eval : Ast.expr
