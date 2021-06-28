@@ -118,6 +118,7 @@ let rec pretty_print (expr:expr) : string =
 (* helper function for pretty_print *)
 and binop_print op e1 e2 = 
   let h e1 e2 sym = pretty_print e1 ^ sym ^ pretty_print e2 in
+  (* Print EVal Helper*)
   let pevh = h e1 e2 in
   match op with
   | Add -> pevh " + "
@@ -143,9 +144,49 @@ let rec eval e =
 let type_of s = 
   find_type Environment.empty s
 
+let print_type_p (t : ttype ) : string = 
+  print_type t
+
+
 (* big step function for evaluating expressions *)
   let interp s = 
   let e = parse s in
   typecheck e;
   pretty_print @@ eval e
   
+
+
+
+(* typer tests *)
+let print_type expr = 
+  parse expr
+  |> type_of
+  |> print_type_p 
+  |> Stdio.printf "%s" 
+
+
+
+let%expect_test "int type" = 
+  print_type "1";
+  [%expect {| int |}]
+
+let %expect_test "bool type" = 
+  print_type "true";
+  [%expect {| bool |}]
+
+let %expect_test "fun int int type" = 
+  print_type "(fun x : int -> x)";
+  [%expect {| fun: int -> int |}]
+
+let %expect_test "fun bool type" = 
+  print_type "(fun x : bool -> x)";
+  [%expect {| fun: bool -> bool |}]
+
+let %expect_test "fun fun type" = 
+  print_type "(fun x : fun -> x)";
+  [%expect {| fun: fun -> fun |}]
+
+(*let %expect_test "fun int int type" = 
+  print_type "(fun x : fun -> (fun y:int -> 1))";
+  [%expect {| fun: int -> int |}]
+*)

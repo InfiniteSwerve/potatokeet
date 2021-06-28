@@ -63,13 +63,13 @@ expr:
     | e1 = expr; e2 = expr { App (e1, e2) }
     | pexpr = paren_exp { pexpr }
 
-
-
 paren_exp:
-    | LPAREN; FUN; var = VAR; COLON; t = typ ; RARROW; e = expr; RPAREN { Fun (var, t, e) }
+    | LPAREN; FUN; var = VAR; COLON; t = typ; RARROW; e = expr; RPAREN { Fun (var, t, e) }
     | LPAREN; SUB; i = INT; RPAREN { Int (-i) }
     | LPAREN; e = expr; RPAREN { e }
     
+
+
 typ:
     | TBOOL { TBool }
     | TINT { TInt }

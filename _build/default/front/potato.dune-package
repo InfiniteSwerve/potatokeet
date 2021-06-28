@@ -6,7 +6,13 @@
  (archives (byte potato.cma) (native potato.cmxa))
  (plugins (byte potato.cma) (native potato.cmxs))
  (native_archives potato.a)
- (requires base stdio)
+ (requires
+  base
+  stdio
+  ppx_inline_test.runtime-lib
+  ppx_here.runtime-lib
+  ppx_expect.collector
+  ppx_expect.config)
  (main_module_name Potato)
  (modes byte native)
  (modules

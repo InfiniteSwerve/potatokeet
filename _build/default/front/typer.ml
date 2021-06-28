@@ -13,11 +13,12 @@ let not_function_err = "First expression is not a function "
 
 let unspecified_type_err = "Error: Unspecified Type"
 
+
 (* declaring basic types *)
 type ttype = 
-  | TypeInt
+  | TypeInt 
   | TypeBool
-  | TypeFunc of (ttype * ttype)
+  | TypeFunc  of (ttype * ttype)
 
 
 
@@ -42,7 +43,7 @@ let type_to_type (t : typ) : ttype =
   match t with
   | TInt  -> TypeInt
   | TBool -> TypeBool
-
+  
 let is_value : expr -> bool = function
   | Bool _ | Int _ | Fun _ -> true
   | Let _ | App _ | Var _ | Binop _ -> false
@@ -86,15 +87,15 @@ and find_type_fun env var t e =
   let env' = add env var t' in
   TypeFunc (t', (find_type env' e))
 
-
+let print_type t = 
+  let rec print_type_h (t) : string = 
+    match t with
+    | TypeInt -> "int"
+    | TypeBool -> "bool"
+    | TypeFunc (t1, t2) -> "fun: "^ print_type_h t1 ^ " -> "^ print_type_h t2
+  in
+  print_type_h t
+  
 (* raises errors if expr is not well-typed, unit otherwise *)
 let typecheck expr = 
   ignore (find_type empty expr)
-
-
-  
-
-
-
-
-

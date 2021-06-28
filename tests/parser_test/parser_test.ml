@@ -40,9 +40,9 @@ let function_test () =
   Alcotest.(check string)   "function variable definition application" "2" (interp "let x = 2 in let f = (fun y -> x + y) in (f 1)")
 (*let var_fun_test () = 
   Alcotest.(check string)   "Application" "" (interp ""*)
-let static_coping_test () = 
-  Alcotest.(check string)   "basic scoping test" "1" (interp "let x = 1 in let f = (fun y -> x) in let x = 2 in f x");
-  Alcotest.(check string)   "basic scoping test" "4" (interp "let x = 1 in let c = 3 in let f = (fun y ->  c + x) in let x = 2 in f x")
+(*let static_coping_test () = 
+  Alcotest.(check string)   "basic scoping test" "1" (interp "let x = 1 in let f = (fun y -> x) in let x = 2 in f x")
+  Alcotest.(check string)   "basic scoping test" "4" (interp "let x = 1 in let c = 3 in let f = (fun y ->  c + x) in let x = 2 in f x")*)
 
 
 
@@ -60,8 +60,8 @@ let () =
     "function_case", [
       test_case "functions"     `Quick arith_test;
     ];
-    "scoping_case", [
+    (*"scoping_case", [
       test_case "scoping"       `Quick static_coping_test;
-    ]
+    ]*)
   ]
   

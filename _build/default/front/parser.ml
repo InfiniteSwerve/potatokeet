@@ -681,8 +681,8 @@ and _menhir_goto_expr : _menhir_env -> 'ttv_tail -> _menhir_state -> (Ast.expr) 
 # 682 "front/parser.ml"
             ))), (t : (Ast.typ))), _, (e : (Ast.expr))) = _menhir_stack in
             let _v : (Ast.expr) = 
-# 69 "front/parser.mly"
-                                                                        ( Fun (var, t, e) )
+# 67 "front/parser.mly"
+                                                                       ( Fun (var, t, e) )
 # 687 "front/parser.ml"
              in
             _menhir_goto_paren_exp _menhir_env _menhir_stack _menhir_s _v
@@ -726,7 +726,7 @@ and _menhir_goto_expr : _menhir_env -> 'ttv_tail -> _menhir_state -> (Ast.expr) 
             let _menhir_stack = Obj.magic _menhir_stack in
             let ((_menhir_stack, _menhir_s), _, (e : (Ast.expr))) = _menhir_stack in
             let _v : (Ast.expr) = 
-# 71 "front/parser.mly"
+# 69 "front/parser.mly"
                                ( e )
 # 732 "front/parser.ml"
              in
@@ -1008,7 +1008,7 @@ and _menhir_run3 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
 # 1009 "front/parser.ml"
                 ))) = _menhir_stack in
                 let _v : (Ast.expr) = 
-# 70 "front/parser.mly"
+# 68 "front/parser.mly"
                                    ( Int (-i) )
 # 1014 "front/parser.ml"
                  in

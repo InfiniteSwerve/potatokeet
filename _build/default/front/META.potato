@@ -1,5 +1,11 @@
 description = ""
-requires = "base stdio"
+requires =
+"base
+ ppx_expect.collector
+ ppx_expect.config
+ ppx_here.runtime-lib
+ ppx_inline_test.runtime-lib
+ stdio"
 archive(byte) = "potato.cma"
 archive(native) = "potato.cmxa"
 plugin(byte) = "potato.cma"
