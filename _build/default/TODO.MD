@@ -6,6 +6,7 @@
 - Static scoping (using env) 
 - Allow proximal function application (f x y instead of (f x) y)
 - Typing (type annotations on parameters) (write tests for piece)
-- Testing [DONE]
+- Get type replacement for anonymous types
+- Testing 
 - Include PPX Bisect for code coverage
 - Make Sub more intuitive and proper

@@ -7,9 +7,10 @@ let parse (s : string) : expr =
   let ast = Parser.eval Lexer.read tokens in
   ast
 
-let unbound_variable_err = "Error: Unbound Variable"
 
 
+let type_of s = 
+  find_type Environment.empty s
 
 (* generate a fresh symbol *)
 let gensym = 
@@ -33,7 +34,8 @@ let rec fv : expr -> VarSet.t = function
   | _ -> empty
 
 (* replaces variables to deal with capture
-   avoiding substitution *)
+   avoiding substitution
+   replace all x's with y's in e *)
 let rec replace e y x = match e with
   | Var z -> if z = x then Var y else e
   | App (e1, e2) -> App(replace e1 y x, replace e2 y x)
@@ -107,7 +109,7 @@ let rec pretty_print (expr:expr) : string =
   match expr with
   | Int i -> string_of_int i
   | Bool b -> string_of_bool b
-  | Var var -> var
+  | Var var -> var   
   | Binop (op, e1, e2) -> binop_print op e1 e2
   | Let (var, e1, e2) -> 
       "let " ^ var ^ " = " ^ pretty_print e1 ^ " in " ^ pretty_print e2
@@ -129,11 +131,16 @@ and binop_print op e1 e2 =
   | Or -> pevh " || "
 
 and fun_print var t e = 
-  let t' = match t with
-  | TInt -> "int"
-  | TBool -> "bool"
-  in
-  "fun " ^ var ^ " : " ^ t' ^ " -> " ^ pretty_print e
+  let rec match_small t =
+    match t with
+    | TInt -> "int"
+    | TBool -> "bool"
+    | TNull -> "'a"
+    | TFun {param_type;body_type} -> 
+      "(" ^ match_small param_type ^ " -> " ^ match_small body_type ^ ")" in
+  let t' = match_small t in
+  let e' = replace e t' var in
+  "fun: " ^ t' ^ " -> " ^ pretty_print e'
 
 (* Simplifies AST's until they are values *)
 let rec eval e = 
@@ -141,8 +148,6 @@ let rec eval e =
   else eval @@ simplify e
 
 
-let type_of s = 
-  find_type Environment.empty s
 
 let print_type_p (t : ttype ) : string = 
   print_type t
@@ -156,7 +161,6 @@ let print_type_p (t : ttype ) : string =
   
 
 
-
 (* typer tests *)
 let print_type expr = 
   parse expr
@@ -165,7 +169,7 @@ let print_type expr =
   |> Stdio.printf "%s" 
 
 
-
+(*
 let%expect_test "int type" = 
   print_type "1";
   [%expect {| int |}]
@@ -183,10 +187,10 @@ let %expect_test "fun bool type" =
   [%expect {| fun: bool -> bool |}]
 
 let %expect_test "fun fun type" = 
-  print_type "(fun x : fun -> x)";
-  [%expect {| fun: fun -> fun |}]
+  print_type "(fun x -> x)";
+  [%expect {| fun: 'a -> 'a |}]
 
-(*let %expect_test "fun int int type" = 
-  print_type "(fun x : fun -> (fun y:int -> 1))";
-  [%expect {| fun: int -> int |}]
+let %expect_test "fun int int type" = 
+  print_type "(fun x -> (fun y:int -> 1))";
+  [%expect {| fun: 'a -> fun: int -> int |}]
 *)

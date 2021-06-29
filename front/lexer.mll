@@ -23,6 +23,8 @@ rule read =
     | "int" { TINT }
     | "fun" { FUN }
     | "->" { RARROW }
+    | ","   { COMMA }
+    | "Lam" { TFUN }
     | "+" { ADD }
     | "-" { SUB }
     | "*" { MULT }

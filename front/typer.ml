@@ -13,12 +13,32 @@ let not_function_err = "First expression is not a function "
 
 let unspecified_type_err = "Error: Unspecified Type"
 
+let type_error = "Mismatched types"
+
 
 (* declaring basic types *)
 type ttype = 
   | TypeInt 
   | TypeBool
-  | TypeFunc  of (ttype * ttype)
+  | TypeNull
+  | TypeFunc  of {param_type : ttype ; body_type: ttype }
+
+
+let rec t_equal a b = 
+  match a,b with
+  | TypeInt, TypeInt -> true
+  | TypeBool, TypeBool -> true
+  | TypeFunc {param_type = param_a; body_type = body_a},
+    TypeFunc {param_type = param_b; body_type = body_b}
+    -> t_equal param_a param_b && t_equal body_a body_b
+  | _ -> false
+
+
+
+let gensym_type = 
+  let counter = ref 0 in
+  fun () -> incr counter; "'a" ^ string_of_int !counter
+
 
 
 
@@ -39,14 +59,30 @@ end
 
 open Environment
 
-let type_to_type (t : typ) : ttype = 
+let rec type_to_type (t : typ) : ttype = 
   match t with
   | TInt  -> TypeInt
   | TBool -> TypeBool
+  | TNull -> TypeNull
+  | TFun {param_type;body_type} -> 
+    TypeFunc {param_type = type_to_type param_type;
+               body_type = type_to_type body_type}
+
   
 let is_value : expr -> bool = function
   | Bool _ | Int _ | Fun _ -> true
   | Let _ | App _ | Var _ | Binop _ -> false
+
+
+let print_type t = 
+  let rec print_type_h (t) : string = 
+    match t with
+    | TypeInt -> "int"
+    | TypeBool -> "bool"
+    | TypeNull -> "'a"
+    | TypeFunc {param_type; body_type;_} -> "fun: "^ print_type_h param_type ^ " -> "^ print_type_h body_type
+  in
+  print_type_h t
 
 (* finds type of the input expression based on env *)
 let rec find_type env = function
@@ -70,7 +106,8 @@ and find_type_binop env binop e1 e2 =
   | Or, TypeBool, TypeBool -> TypeBool
   | _ -> failwith binop_err
 
-(* helper function for find_type *)
+(* helper function for find_type
+  let var = e1 in e2 *)
 and find_type_let env var e1 e2 = 
   let t1 = find_type env e1 in
   let env' = add env var t1 in
@@ -78,23 +115,21 @@ and find_type_let env var e1 e2 =
 
 (* helper function for find_type *)
 and find_type_app env e1 e2  = 
-  match e1 with
-  | Fun(var, _, e) -> find_type_let env var e2 e 
-  | _ ->  failwith not_function_err
+  let func_type = find_type env e1 in
+  let argument_type = find_type env e2 in
+  match func_type with
+  | TypeFunc {param_type; body_type} 
+    when t_equal param_type argument_type  
+    || t_equal param_type TypeNull -> body_type
+  | _ -> failwith type_error
+
 
 and find_type_fun env var t e = 
   let t' = type_to_type t in
   let env' = add env var t' in
-  TypeFunc (t', (find_type env' e))
+  TypeFunc { param_type = t';body_type =  find_type env' e}
 
-let print_type t = 
-  let rec print_type_h (t) : string = 
-    match t with
-    | TypeInt -> "int"
-    | TypeBool -> "bool"
-    | TypeFunc (t1, t2) -> "fun: "^ print_type_h t1 ^ " -> "^ print_type_h t2
-  in
-  print_type_h t
+
   
 (* raises errors if expr is not well-typed, unit otherwise *)
 let typecheck expr = 

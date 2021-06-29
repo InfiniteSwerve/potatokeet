@@ -13,6 +13,7 @@ open Ast
 %token FALSE
 %token TBOOL
 %token TINT
+%token TFUN
 %token FUN
 %token RARROW 
 %token ADD
@@ -25,6 +26,7 @@ open Ast
 %token LPAREN
 %token RPAREN
 %token COLON
+%token COMMA
 %token AND
 %token OR 
 %token EOF
@@ -63,16 +65,19 @@ expr:
     | e1 = expr; e2 = expr { App (e1, e2) }
     | pexpr = paren_exp { pexpr }
 
+mb_type: 
+    | var = VAR; COLON; t = typ { (var, t) }
+    | var = VAR { (var, TNull) }
+
 paren_exp:
-    | LPAREN; FUN; var = VAR; COLON; t = typ; RARROW; e = expr; RPAREN { Fun (var, t, e) }
+    | LPAREN; FUN; op = mb_type ; RARROW; e = expr; RPAREN {let var, t = op in Fun (var, t, e) }
     | LPAREN; SUB; i = INT; RPAREN { Int (-i) }
     | LPAREN; e = expr; RPAREN { e }
-    
-
 
 typ:
     | TBOOL { TBool }
     | TINT { TInt }
+    | LPAREN; TFUN ; t1 = typ;COMMA; t2 = typ; RPAREN {TFun {param_type = t1;body_type = t2 }}
 
 %inline binop:
     | ADD { Add }

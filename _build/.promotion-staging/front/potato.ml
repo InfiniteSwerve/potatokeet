@@ -130,12 +130,10 @@ and binop_print op e1 e2 =
 
 and fun_print var t e = 
   let t' = match t with
-  | TInt -> ": int"
-  | TBool -> ": bool"
-  | TNull -> ""
-  | TFun -> ": fun"
+  | TInt -> "int"
+  | TBool -> "bool"
   in
-  "fun " ^ var ^  t' ^ " -> " ^ pretty_print e
+  "fun " ^ var ^ " : " ^ t' ^ " -> " ^ pretty_print e
 
 (* Simplifies AST's until they are values *)
 let rec eval e = 
@@ -194,8 +192,8 @@ let %expect_test "fun fun type" =
 
   (Potato__Parser.MenhirBasics.Error)
   Raised at Potato__Parser._menhir_errorcase in file "front/parser.ml", line 885, characters 8-18
-  Called from Potato.print_type in file "front/potato.ml", line 164, characters 2-12
-  Called from Potato.(fun) in file "front/potato.ml", line 188, characters 2-33
+  Called from Potato.print_type in file "front/potato.ml", line 162, characters 2-12
+  Called from Potato.(fun) in file "front/potato.ml", line 186, characters 2-33
   Called from Expect_test_collector.Make.Instance.exec in file "collector/expect_test_collector.ml", line 244, characters 12-19 |}]
 
 (*let %expect_test "fun int int type" = 

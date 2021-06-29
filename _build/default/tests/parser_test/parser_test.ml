@@ -28,10 +28,10 @@ let bool_test () =
 
 
 let function_test () = 
-  Alcotest.(check string)   "function unit" "fun x -> x" (interp "(fun x -> x)");
-  Alcotest.(check string)   "identity function application: int" "1" (interp "(fun x -> x) 1");
-  Alcotest.(check string)   "identity function application: bool" "true" (interp "(fun x -> x) true");
-  Alcotest.(check string)   "identity function application: function" "fun x -> x" (interp "(fun x -> x) (fun x -> x)");
+  Alcotest.(check string)   "function unit" "fun x : int -> x" (interp "(fun x:int -> x)");
+  Alcotest.(check string)   "identity function application: int" "1" (interp "(fun x:int -> x) 1");
+  Alcotest.(check string)   "identity function application: bool" "true" (interp "(fun x:bool -> x) true");
+  Alcotest.(check string)   "identity function application: function" "fun x : int -> x" (interp "(fun x -> x) (fun x:int -> x)");
   Alcotest.(check string)   "constant function application: int" "1" (interp "(fun x -> 1) 2");
   Alcotest.(check string)   "currying application" "1" (interp "((fun x -> (fun y -> y))1)1 ");
   Alcotest.(check string)   "currying addition" "3" (interp "((fun x -> (fun y -> x + y))1)2 ");
@@ -58,7 +58,7 @@ let () =
       test_case "booleans"      `Quick bool_test;
     ];
     "function_case", [
-      test_case "functions"     `Quick arith_test;
+      test_case "functions"     `Quick function_test;
     ];
     (*"scoping_case", [
       test_case "scoping"       `Quick static_coping_test;

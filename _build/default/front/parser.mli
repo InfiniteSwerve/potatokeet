@@ -5,6 +5,7 @@ type token =
   | VAR of (string)
   | TRUE
   | TINT
+  | TFUN
   | TBOOL
   | SUB
   | RPAREN
@@ -20,6 +21,7 @@ type token =
   | EQUAL
   | EOF
   | DIV
+  | COMMA
   | COLON
   | AND
   | ADD
