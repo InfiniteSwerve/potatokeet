@@ -50,11 +50,12 @@ open Ast
 
 %%
 
-
+(* Handles entire program. *)
 eval:
     | e = expr; EOF { e }
     ;
 
+(* Handles all main expressions. *)
 expr:
     | i = INT { Int i }
     | var = VAR { Var var }
@@ -65,20 +66,27 @@ expr:
     | e1 = expr; e2 = expr { App (e1, e2) }
     | pexpr = paren_exp { pexpr }
 
+
+(* Handles typed parameters, including anonymous types. *)
 mb_type: 
     | var = VAR; COLON; t = typ { (var, t) }
     | var = VAR { (var, TNull) }
 
+(* Handles parentheses wrapped expressions.
+    All functions are wrapped, and negative numbers are wrapped. *)
 paren_exp:
     | LPAREN; FUN; op = mb_type ; RARROW; e = expr; RPAREN {let var, t = op in Fun (var, t, e) }
     | LPAREN; SUB; i = INT; RPAREN { Int (-i) }
     | LPAREN; e = expr; RPAREN { e }
 
+(* Handles types for function parameters *)
 typ:
     | TBOOL { TBool }
     | TINT { TInt }
     | LPAREN; TFUN ; t1 = typ;COMMA; t2 = typ; RPAREN {TFun {param_type = t1;body_type = t2 }}
 
+(* Handles inline binary operations.
+    Saves lots of repetition during the actual implementation*)
 %inline binop:
     | ADD { Add }
     | SUB { Sub }

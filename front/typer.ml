@@ -33,15 +33,6 @@ let rec t_equal a b =
     -> t_equal param_a param_b && t_equal body_a body_b
   | _ -> false
 
-
-
-let gensym_type = 
-  let counter = ref 0 in
-  fun () -> incr counter; "'a" ^ string_of_int !counter
-
-
-
-
 (* defining environment *)
 module Environment = struct
   type t = (string * ttype) list 

@@ -169,7 +169,7 @@ let print_type expr =
   |> Stdio.printf "%s" 
 
 
-(*
+
 let%expect_test "int type" = 
   print_type "1";
   [%expect {| int |}]
@@ -193,4 +193,4 @@ let %expect_test "fun fun type" =
 let %expect_test "fun int int type" = 
   print_type "(fun x -> (fun y:int -> 1))";
   [%expect {| fun: 'a -> fun: int -> int |}]
-*)
+

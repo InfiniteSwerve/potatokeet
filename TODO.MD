@@ -3,10 +3,10 @@
 - Application [DONE]
 - Unary ops (neg and not)
 - Pretty printing of output [DONE]
-- Static scoping (using env) 
+- Static scoping (using env) [DONE]
 - Allow proximal function application (f x y instead of (f x) y)
-- Typing (type annotations on parameters) (write tests for piece)
-- Get type replacement for anonymous types
+- Typing (type annotations on parameters) (write tests for piece) [DONE]
+- Add Anonymous types
 - Testing 
 - Include PPX Bisect for code coverage
 - Make Sub more intuitive and proper

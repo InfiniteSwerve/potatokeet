@@ -10,7 +10,7 @@ type typ =
   | TInt 
   | TBool
   | TNull
-  | TFun of {param_type:typ;body_type:typ}
+  | TFun of {param_type : typ ; body_type : typ}
 
   type expr = 
   | Int of int

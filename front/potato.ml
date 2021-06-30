@@ -1,14 +1,14 @@
 open Ast
 open Typer
 
-(* pushes string through lexer and parser and returns AST *)
+(* pushes string through lexer and parser and returns AST (expr) *)
 let parse (s : string) : expr = 
   let tokens = Lexing.from_string s in
   let ast = Parser.eval Lexer.read tokens in
   ast
 
 
-
+(* finds type of parsed expression *)
 let type_of s = 
   find_type Environment.empty s
 
@@ -18,7 +18,7 @@ let gensym =
   fun () -> incr counter; "var" ^ string_of_int !counter
 
 
-
+(*  *)
 module VarSet = Set.Make(String)
 let empty = VarSet.empty
 let singleton = VarSet.singleton
@@ -59,7 +59,7 @@ let rec subst e v x =
       you'll be duplicating computation *)
     if var = x then Let (var, subst_e, e2)
     else Let (var, subst_e, subst e2 v x)
-  (* We fix variable capture by replacement*)
+  (* We fix variable capture by variable replacement*)
   | Fun (var, t, exp) -> 
     if var = x then e 
     else if not (mem var (fv v)) then Fun (var, t, subst exp v x)
@@ -88,7 +88,7 @@ let rec simplify ( expr : expr ) : expr = match expr with
   
   
 
-(* returns v1 op v2 when v1, v2 are values not expr's *)
+(* Returns v1 op v2 when v1, v2 are values not expr's *)
 and binop_step op v1 v2 = match op, v1, v2 with
   | Add, Int a, Int b -> Int (a + b)
   | Sub, Int a, Int b -> Int (a - b)
@@ -98,13 +98,13 @@ and binop_step op v1 v2 = match op, v1, v2 with
   | Or, Bool a, Bool b -> Bool (a || b)
   | _ -> failwith binop_err
 
-(* applies e2 to e1 if e1 is a function *)
+(* Applies e2 to e1 if e1 is a function *)
 and app_step e1 e2 = 
   match e1 with
   | Fun (var, _, e) -> subst e (simplify e2) var
   | _ -> failwith not_function_err
 
-(* pattern matches through expr and returns result as string *)
+(* Pattern matches through expr and returns result as string *)
 let rec pretty_print (expr:expr) : string = 
   match expr with
   | Int i -> string_of_int i
@@ -117,7 +117,7 @@ let rec pretty_print (expr:expr) : string =
        
   | App (e1, e2) -> pretty_print e1 ^ pretty_print e2 
 
-(* helper function for pretty_print *)
+(* Helper function for pretty_print *)
 and binop_print op e1 e2 = 
   let h e1 e2 sym = pretty_print e1 ^ sym ^ pretty_print e2 in
   (* Print EVal Helper*)
@@ -130,6 +130,7 @@ and binop_print op e1 e2 =
   | And -> pevh " && "
   | Or -> pevh " || "
 
+(* Helper function for pretty print*)
 and fun_print var t e = 
   let rec match_small t =
     match t with
@@ -148,7 +149,7 @@ let rec eval e =
   else eval @@ simplify e
 
 
-
+(* pulls in print_type from Typer *)
 let print_type_p (t : ttype ) : string = 
   print_type t
 
@@ -169,7 +170,6 @@ let print_type expr =
   |> Stdio.printf "%s" 
 
 
-(*
 let%expect_test "int type" = 
   print_type "1";
   [%expect {| int |}]
@@ -193,4 +193,4 @@ let %expect_test "fun fun type" =
 let %expect_test "fun int int type" = 
   print_type "(fun x -> (fun y:int -> 1))";
   [%expect {| fun: 'a -> fun: int -> int |}]
-*)
+
